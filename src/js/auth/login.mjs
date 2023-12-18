@@ -1,6 +1,5 @@
 import {
     API_LOGIN_URL,
-    API_PROFILE_URL,
     errorMessageElement,
 } from '../const/constant.mjs';
 
@@ -28,6 +27,10 @@ export async function loginUser(username, password) {
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('userName', data.name);
         localStorage.setItem('userCredit', data.credits.toString());
+        if (data.avatar) {
+            localStorage.setItem('userAvatar', data.avatar);
+        }
+
 
         checkAndHideForms();
 
@@ -79,7 +82,24 @@ function hideLoginRegisterForms() {
     }
 }
 
+function updateHeader() {
+    const accessToken = localStorage.getItem('accessToken');
+    const userNameElement = document.getElementById('userName');
+    const userCreditsElement = document.getElementById('userCredits');
+
+    if (accessToken && userNameElement && userCreditsElement) {
+        const userName = localStorage.getItem('userName');
+        const userCredits = localStorage.getItem('userCredit');
+
+        if (userName && userCredits) {
+            userNameElement.textContent = userName;
+            userCreditsElement.textContent = `${userCredits} Credits`;
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
     checkAndHideForms();
+    updateHeader();
 });
 
