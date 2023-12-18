@@ -28,7 +28,7 @@ async function displayListingDetails(listingId) {
                 const galleryImage = document.createElement('img');
                 galleryImage.src = imageSrc;
                 galleryImage.alt = `Gallery Image ${index + 1}`;
-                galleryImage.classList.add('img-thumbnail', 'img-fluid', 'col-2');
+                galleryImage.classList.add('img-thumbnail', 'img-fluid', 'col-4');
             
                 galleryContainer.appendChild(galleryImage);
             

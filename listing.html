@@ -17,6 +17,7 @@
 
     <script type="module" src="src/js/index.js"></script>
     <script type="module" src="src/js/auctions/single-listing.mjs"></script>
+    <script type="module" src="src/js/auth/profile.mjs"></script>
     <title>Listing Details</title>
   </head>
   <body>
@@ -43,12 +44,10 @@
         >
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link pe-3 py-3" href="/profile/index.html"
-                >Profile</a
-              >
+              <a class="nav-link pe-3 py-3" href="profile.html">Profile</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link pe-3 py-3 active" href="/auctions/index.html"
+              <a class="nav-link pe-3 py-3 active" href="index.html"
                 >Auctions</a
               >
             </li>
@@ -70,12 +69,22 @@
         </div>
       </div>
     </nav>
-    <div id="userBanner" class="bg-primary text-light p-3">
-      <span id="userName">John Doe</span> |
-      <span id="userCredits">100 Credits</span>
-      <button id="createAuctionBtn" class="btn btn-light ms-2">
-        Create New Auction
-      </button>
+    <div class="bg-dark header-content">
+      <div class="container">
+        <div class="d-flex justify-content-between text-light p-3">
+          <div>
+            <span id="userName">John Doe</span> |
+            <span id="userCredits">100 Credits</span>
+          </div>
+          <button
+            class="btn btn-secondary btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#createAuctionModal"
+          >
+            Create New Auction
+          </button>
+        </div>
+      </div>
     </div>
     <div class="container">
       <div class="row justify-content-end">
@@ -115,18 +124,95 @@
         </div>
       </div>
     </div>
+    <div
+      class="modal fade"
+      id="createAuctionModal"
+      tabindex="-1"
+      aria-labelledby="createAuctionModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="createAuctionModalLabel">
+              Create New Auction
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="auctionForm">
+              <div class="mb-3">
+                <label for="auctionTitle" class="form-label"
+                  >Auction Title*</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="auctionTitle"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="auctionDescription" class="form-label"
+                  >Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="auctionDescription"
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="auctionTags" class="form-label"
+                  >Tags (comma-separated)</label
+                >
+                <input type="text" class="form-control" id="auctionTags" />
+              </div>
+              <div class="mb-3">
+                <label for="auctionMedia" class="form-label"
+                  >Media URLs (comma-separated)</label
+                >
+                <input type="text" class="form-control" id="auctionMedia" />
+              </div>
+              <div class="mb-3">
+                <label for="auctionEndsAt" class="form-label"
+                  >Auction Ends At*</label
+                >
+                <input
+                  type="datetime-local"
+                  class="form-control"
+                  id="auctionEndsAt"
+                  required
+                />
+              </div>
+              <button
+                id="createAuctionBtn"
+                type="submit"
+                class="btn btn-primary"
+              >
+                Create Auction
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="container mt-4">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <img id="listingImage" class="img-fluid mb-3" alt="Listing Image" />
           <div id="imageGallery" class="row d-flex"></div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
           <h2 id="listingTitle"></h2>
           <p id="listingAuthor"></p>
           <p id="listingDescription"></p>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-4">
           <h2>Bid History</h2>
           <ul id="bidHistory" class="list-group"></ul>
         </div>
