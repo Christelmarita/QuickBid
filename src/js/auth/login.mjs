@@ -1,5 +1,6 @@
 import {
     API_LOGIN_URL,
+    API_PROFILE_URL,
     errorMessageElement,
 } from '../const/constant.mjs';
 
@@ -23,7 +24,10 @@ export async function loginUser(username, password) {
         }
 
         const data = await response.json();
+
         localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('userName', data.name);
+        localStorage.setItem('userCredit', data.credits.toString());
 
         checkAndHideForms();
 
@@ -35,11 +39,22 @@ export async function loginUser(username, password) {
 
 function checkAndHideForms() {
     const accessToken = localStorage.getItem('accessToken');
+    
+    const userNameElement = document.getElementById('userName');
+    const userCreditsElement = document.getElementById('userCredits');
 
-    if (accessToken) {
-        hideLoginRegisterForms();
-        showLogoutButton();
-        updateBidFunctionality(true);
+    if (accessToken && userNameElement && userCreditsElement) {
+        const userName = localStorage.getItem('userName');
+        const userCredits = localStorage.getItem('userCredit');
+
+        if (userName && userCredits) {
+            userNameElement.textContent = userName;
+            userCreditsElement.textContent = `${userCredits} Credits`;
+
+            hideLoginRegisterForms();
+            showLogoutButton();
+            updateBidFunctionality(true);
+        }
     }
 }
 
@@ -50,15 +65,12 @@ function showLogoutButton() {
     }
 }
 
-
 document.getElementById('loginForm').addEventListener('submit', function (event) {
     event.preventDefault();
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-
     loginUser(username, password);
 });
-
 
 function hideLoginRegisterForms() {
     const loginRegisterContainer = document.getElementById('loginRegisterContainer');
@@ -67,6 +79,7 @@ function hideLoginRegisterForms() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
     checkAndHideForms();
 });
+

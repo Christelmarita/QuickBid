@@ -8,8 +8,8 @@ import { updateBidFunctionality } from '../const/constant.mjs';
 export async function getListings() {
     try {
         const timestamp = new Date().getTime();
-        const API_ALL_LISTINGS_SORTED = `${API_ALL_LISTINGS}?_bids=true&_timestamp=${timestamp}&sort=created`;
-        const response = await fetch(API_ALL_LISTINGS_SORTED);
+        const url = `${API_ALL_LISTINGS}?_bids=true&_timestamp=${timestamp}&sort=created`;
+        const response = await fetch(url);
 
         if (!response.ok) {
             throw new Error('Failed to fetch auction listings');
@@ -30,6 +30,7 @@ export async function createListingHTML(listingContainer) {
     listingContainer.forEach(listing => {
         const cardContainer = document.createElement('div');
         cardContainer.classList.add('col-md-4', 'mb-4', 'card-container');
+        cardContainer.dataset.listingId = listing.id;
 
         const card = document.createElement('div');
         card.classList.add('card');
@@ -41,61 +42,119 @@ export async function createListingHTML(listingContainer) {
             image.src = '../../../images/placeholder.png';
         }
         image.alt = listing.title;
-        image.classList.add('card-img-top','h-100');
+        image.classList.add('card-img-top', 'h-100');
+        image.dataset.listingId = listing.id;
 
         const cardBody = document.createElement('div');
         cardBody.classList.add('card-body');
-
+        
         const title = document.createElement('h5');
         title.classList.add('card-title');
         title.textContent = listing.title;
-
+        
         const bidText = document.createElement('p');
         bidText.classList.add('card-text');
-        bidText.textContent = 'Current Bid: $100';
-
+        
+        const highestBid = calculateHighestBid(listing);
+        const strongElement = document.createElement('strong');
+        
+        if (highestBid) {
+            const bidderName = highestBid.bidderName;
+            bidText.textContent = 'Current Highest Bid: ';
+            strongElement.textContent = `${highestBid.amount} credits by ${bidderName}`;
+        } else {
+            strongElement.textContent = 'No bids yet';
+        }
+        
         const bidForm = document.createElement('form');
-bidForm.classList.add('row', 'g-2', 'bid-form');
-
-const bidAmountCol = document.createElement('div');
-bidAmountCol.classList.add('col-md-6');
-
-const bidAmountInput = document.createElement('input');
-bidAmountInput.type = 'text';
-bidAmountInput.classList.add('form-control', 'bid-amount-input');
-bidAmountInput.name = 'bidAmount';
-bidAmountInput.required = true;
-bidAmountInput.disabled = !isLoggedIn;
-
-const bidLabel = document.createElement('label');
-bidLabel.classList.add('form-label');
-bidLabel.textContent = 'Your Bid:';
-
-const placeBidBtn = document.createElement('button');
-placeBidBtn.type = 'submit';
-placeBidBtn.classList.add('btn', 'btn-primary', 'place-bid-btn');
-placeBidBtn.disabled = !isLoggedIn;
-placeBidBtn.textContent = 'Place Bid';
-
-bidAmountCol.appendChild(bidLabel);
-bidAmountCol.appendChild(bidAmountInput);
-bidForm.appendChild(bidAmountCol);
-bidForm.appendChild(placeBidBtn);
-
-cardBody.append(title, bidText, bidForm);
-
-card.append(image, cardBody);
-cardContainer.appendChild(card);
-container.appendChild(cardContainer);
-
-
-
+        bidForm.classList.add('row', 'g-2', 'bid-form');
+        
+        const bidAmountCol = document.createElement('div');
+        bidAmountCol.classList.add('col-md-6');
+        
+        const bidAmountInput = document.createElement('input');
+        bidAmountInput.type = 'number';
+        bidAmountInput.classList.add('form-control', 'bid-amount-input');
+        bidAmountInput.name = 'bidAmount';
+        bidAmountInput.required = true;
+        bidAmountInput.disabled = !isLoggedIn;
+        
+        const bidLabel = document.createElement('label');
+        bidLabel.classList.add('form-label');
+        bidLabel.textContent = 'Your Bid:';
+        
+        const placeBidBtn = document.createElement('button');
+        placeBidBtn.type = 'submit';
+        placeBidBtn.classList.add('btn', 'btn-primary', 'place-bid-btn');
+        placeBidBtn.disabled = !isLoggedIn;
+        placeBidBtn.textContent = 'Place Bid';
+        
+        bidForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const bidAmountInputValue = bidAmountInput.value.trim();
+            const bidAmount = parseFloat(bidAmountInputValue);
+        
+            if (isNaN(bidAmount) || bidAmount <= 0) {
+                alert('Please enter a valid bid amount.');
+                return;
+            }
+        
+            await placeBid(listing.id, bidAmount);
+        });
+        
         cardBody.append(title, bidText, bidForm);
+        bidText.appendChild(strongElement);
+        
+        bidAmountCol.appendChild(bidLabel);
+        bidAmountCol.appendChild(bidAmountInput);
+        bidForm.appendChild(bidAmountCol);
+        bidForm.appendChild(placeBidBtn);
+
         card.append(image, cardBody);
         cardContainer.appendChild(card);
         container.appendChild(cardContainer);
     });
 }
+
+
+function calculateHighestBid(listing) {
+    if (listing.bids && listing.bids.length > 0) {
+        return listing.bids[0];
+    } else {
+        return null;
+    }
+}
+
+async function placeBid(listingId, bidAmount) {
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        const url = `${API_ALL_LISTINGS}/${listingId}/bids`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+                amount: bidAmount,
+            }),
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Failed to place bid: ${errorMessage}`);
+        }
+
+        alert('Bid placed successfully!');
+        location.reload();
+    } catch (error) {
+        console.error('Error placing bid:', error.message);
+        alert('Failed to place bid. Please try again.');
+    }
+}
+
+
 
 document.addEventListener('DOMContentLoaded', async function () {
     try {
@@ -111,6 +170,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         Array.from(bidForms).forEach(bidForm => {
             bidForm.style.display = isLoggedIn ? 'block' : 'none';
         });
+
+        const linkContainers = document.querySelectorAll('.card-img-top');
+        linkContainers.forEach(linkContainer => {
+            linkContainer.style.cursor = 'pointer';
+            linkContainer.addEventListener('click', function () {
+                const listingId = linkContainer.dataset.listingId;
+                if (listingId !== undefined) {
+                    window.location.href = `../../../listing.html?id=${listingId}`;
+                }
+            });
+        });
+
     } catch (error) {
         console.error('Error in initialization:', error.message);
     }
