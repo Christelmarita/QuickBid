@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="./dist/css/index.css" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="src/js/index.js"></script>
+    <script type="module" src="src/js/auctions/listings.mjs"></script>
     <title>Login/Register</title>
   </head>
   <body>
@@ -64,7 +65,19 @@
         </div>
       </div>
     </nav>
-
+    <div class="bg-dark header-content">
+      <div class="container">
+        <div class="d-flex justify-content-between text-light p-3">
+          <div>
+            <span id="userName">John Doe</span> |
+            <span id="userCredits">100 Credits</span>
+          </div>
+          <button id="createAuctionBtn" class="btn btn-sm btn-secondary ms-2">
+            Create New Auction
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="container">
       <div class="row justify-content-end">
         <div class="col-lg-6 my-3">

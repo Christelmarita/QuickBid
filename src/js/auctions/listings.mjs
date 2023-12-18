@@ -8,8 +8,8 @@ import { updateBidFunctionality } from '../const/constant.mjs';
 export async function getListings() {
     try {
         const timestamp = new Date().getTime();
-        const API_ALL_LISTINGS_SORTED = `${API_ALL_LISTINGS}?_bids=true&_timestamp=${timestamp}&sort=created`;
-        const response = await fetch(API_ALL_LISTINGS_SORTED);
+        const url = `${API_ALL_LISTINGS}?_bids=true&_timestamp=${timestamp}&sort=created`;
+        const response = await fetch(url);
 
         if (!response.ok) {
             throw new Error('Failed to fetch auction listings');
@@ -30,6 +30,7 @@ export async function createListingHTML(listingContainer) {
     listingContainer.forEach(listing => {
         const cardContainer = document.createElement('div');
         cardContainer.classList.add('col-md-4', 'mb-4', 'card-container');
+        cardContainer.dataset.listingId = listing.id;
 
         const card = document.createElement('div');
         card.classList.add('card');
@@ -42,6 +43,7 @@ export async function createListingHTML(listingContainer) {
         }
         image.alt = listing.title;
         image.classList.add('card-img-top', 'h-100');
+        image.dataset.listingId = listing.id;
 
         const cardBody = document.createElement('div');
         cardBody.classList.add('card-body');
@@ -128,8 +130,6 @@ async function placeBid(listingId, bidAmount) {
         const accessToken = localStorage.getItem('accessToken');
         const url = `${API_ALL_LISTINGS}/${listingId}/bids`;
 
-        console.log('Listing ID:', listingId);
-
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -154,6 +154,8 @@ async function placeBid(listingId, bidAmount) {
     }
 }
 
+
+
 document.addEventListener('DOMContentLoaded', async function () {
     try {
         const listings = await getListings();
@@ -168,6 +170,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         Array.from(bidForms).forEach(bidForm => {
             bidForm.style.display = isLoggedIn ? 'block' : 'none';
         });
+
+        const linkContainers = document.querySelectorAll('.card-img-top');
+        linkContainers.forEach(linkContainer => {
+            linkContainer.style.cursor = 'pointer';
+            linkContainer.addEventListener('click', function () {
+                const listingId = linkContainer.dataset.listingId;
+                if (listingId !== undefined) {
+                    window.location.href = `../../../listing.html?id=${listingId}`;
+                }
+            });
+        });
+
     } catch (error) {
         console.error('Error in initialization:', error.message);
     }
