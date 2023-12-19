@@ -74,8 +74,12 @@ function checkAndHideForms() {
 
 function showLogoutButton() {
     const loggedInContent = document.getElementById('loggedInContent');
+    const loggedInProfile = document.getElementById('loggedInProfile')
     if (loggedInContent) {
         loggedInContent.style.display = 'block';
+    }
+    if (loggedInProfile) {
+        loggedInProfile.style.display = 'block';
     }
 }
 

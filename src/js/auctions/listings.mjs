@@ -66,53 +66,80 @@ export async function createListingHTML(listingContainer) {
             strongElement.textContent = 'No bids yet';
         }
         
-        const bidForm = document.createElement('form');
-        bidForm.classList.add('row', 'g-2', 'bid-form');
-        
-        const bidAmountCol = document.createElement('div');
-        bidAmountCol.classList.add('col-md-6');
-        
-        const bidAmountInput = document.createElement('input');
-        bidAmountInput.type = 'number';
-        bidAmountInput.classList.add('form-control', 'bid-amount-input');
-        bidAmountInput.name = 'bidAmount';
-        bidAmountInput.required = true;
-        bidAmountInput.disabled = !isLoggedIn;
-        
-        const bidLabel = document.createElement('label');
-        bidLabel.classList.add('form-label');
-        bidLabel.textContent = 'Your Bid:';
-        
-        const placeBidBtn = document.createElement('button');
-        placeBidBtn.type = 'submit';
-        placeBidBtn.classList.add('btn', 'btn-primary', 'place-bid-btn');
-        placeBidBtn.disabled = !isLoggedIn;
-        placeBidBtn.textContent = 'Place Bid';
-        
-        bidForm.addEventListener('submit', async function (event) {
-            event.preventDefault();
-            const bidAmountInputValue = bidAmountInput.value.trim();
-            const bidAmount = parseFloat(bidAmountInputValue);
-        
-            if (isNaN(bidAmount) || bidAmount <= 0) {
-                alert('Please enter a valid bid amount.');
-                return;
-            }
-        
-            await placeBid(listing.id, bidAmount);
-        });
-        
-        cardBody.append(title, bidText, bidForm);
-        bidText.appendChild(strongElement);
-        
-        bidAmountCol.appendChild(bidLabel);
-        bidAmountCol.appendChild(bidAmountInput);
-        bidForm.appendChild(bidAmountCol);
-        bidForm.appendChild(placeBidBtn);
+        const endsAtText = document.createElement('p');
+        endsAtText.classList.add('card-text');
 
-        card.append(image, cardBody);
-        cardContainer.appendChild(card);
-        container.appendChild(cardContainer);
+        let intervalId;
+
+        function updateCountdown() {
+        const now = new Date();
+        const timeRemaining = endsAtDate - now;
+
+        if (timeRemaining > 0) {
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            endsAtText.textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        } else {
+            endsAtText.textContent = 'Auction has ended';
+            clearInterval(intervalId);
+        }
+    }
+
+    const endsAtDate = new Date(listing.endsAt);
+    updateCountdown(); 
+
+    intervalId = setInterval(updateCountdown, 1000);
+
+    bidText.appendChild(strongElement);
+
+    const bidForm = document.createElement('form');
+    bidForm.classList.add('row', 'g-2', 'bid-form');
+        
+    const bidAmountCol = document.createElement('div');
+    bidAmountCol.classList.add('col-md-6');
+        
+    const bidAmountInput = document.createElement('input');
+    bidAmountInput.type = 'number';
+    bidAmountInput.classList.add('form-control', 'bid-amount-input');
+    bidAmountInput.name = 'bidAmount';
+    bidAmountInput.required = true;
+    bidAmountInput.disabled = !isLoggedIn;
+        
+    const bidLabel = document.createElement('label');
+    bidLabel.classList.add('form-label');
+    bidLabel.textContent = 'Your Bid:';
+        
+    const placeBidBtn = document.createElement('button');
+    placeBidBtn.type = 'submit';
+    placeBidBtn.classList.add('btn', 'btn-primary', 'place-bid-btn');
+    placeBidBtn.disabled = !isLoggedIn;
+    placeBidBtn.textContent = 'Place Bid';
+        
+    bidForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const bidAmountInputValue = bidAmountInput.value.trim();
+        const bidAmount = parseFloat(bidAmountInputValue);
+        
+        if (isNaN(bidAmount) || bidAmount <= 0) {
+            alert('Please enter a valid bid amount.');
+            return;
+        }
+        await placeBid(listing.id, bidAmount);
+    });
+
+    cardBody.append(title, bidText, endsAtText, bidForm);
+    bidText.appendChild(strongElement);
+    bidAmountCol.appendChild(bidLabel);
+    bidAmountCol.appendChild(bidAmountInput);
+    bidForm.appendChild(bidAmountCol);
+    bidForm.appendChild(placeBidBtn);
+
+    card.append(image, cardBody);
+    cardContainer.appendChild(card);
+    container.appendChild(cardContainer);
     });
 }
 
