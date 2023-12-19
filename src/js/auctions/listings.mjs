@@ -108,6 +108,7 @@ export async function createListingHTML(listingContainer) {
     bidAmountInput.name = 'bidAmount';
     bidAmountInput.required = true;
     bidAmountInput.disabled = !isLoggedIn;
+    bidAmountInput.style.appearance = 'textfield';
         
     const bidLabel = document.createElement('label');
     bidLabel.classList.add('form-label');

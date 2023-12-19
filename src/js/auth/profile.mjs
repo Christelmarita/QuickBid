@@ -1,6 +1,5 @@
 import { API_ALL_LISTINGS } from '../const/constant.mjs';
 import { handleAuctionFormSubmit } from '../utilities/create-auction.mjs'
-import {calculateHighestBid} from '../utilities/bids.mjs';
 
 
 async function deleteAuction(auctionId) {
@@ -104,21 +103,22 @@ document.addEventListener('DOMContentLoaded', function () {
     
     function createAuctionCard(auction, isCreatedByUser) {
         const cardContainer = document.createElement('div');
-        cardContainer.classList.add('col-12', 'col-md-6', 'col-lg-4', 'col-xl-3', 'mb-4', 'd-flex', 'flex-column');
+        cardContainer.classList.add('col-12', 'col-md-9', 'col-lg-4', 'col-xl-3', 'mb-4', 'd-flex', 'flex-column');
         cardContainer.dataset.listingId = auction.id;
     
         const card = document.createElement('div');
         card.classList.add('card', 'card-body', 'auction-card', 'profile-card');
+        
     
         const img = document.createElement('img');
         img.src = auction.media && auction.media[0] || 'placeholder.jpg';
         img.alt = 'Auction Image';
-        img.classList.add('card-img-top', 'auction-img', 'product-images');
-    
+        img.classList.add('card-img-top', 'auction-img', 'product-images', 'mb-3');
+
         const cardBody = document.createElement('div');
         cardBody.classList.add('d-flex', 'flex-column', 'flex-grow-1');
     
-        const title = document.createElement('h6');
+        const title = document.createElement('h5');
         title.classList.add('card-title');
         title.textContent = auction.title;
     

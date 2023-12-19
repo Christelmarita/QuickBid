@@ -82,9 +82,10 @@ async function displayListingDetails(listingId) {
             bidAmountInput.classList.add('form-control', 'bid-amount-input');
             bidAmountInput.name = 'bidAmount';
             bidAmountInput.required = true;
+            bidAmountInput.style.appearance = 'textfield';
 
             const bidLabel = document.createElement('label');
-            bidLabel.classList.add('form-label');
+            bidLabel.classList.add('form-label', 'mt-4', 'h2');
             bidLabel.textContent = 'Your Bid:';
 
             const placeBidBtn = document.createElement('button');
