@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     function createAuctionCard(auction, isCreatedByUser) {
         const cardContainer = document.createElement('div');
-        cardContainer.classList.add('col-12', 'col-md-9', 'col-lg-4', 'col-xl-3', 'mb-4', 'd-flex', 'flex-column');
+        cardContainer.classList.add('col-12', 'col-md-6', 'col-lg-4', 'mb-4', 'd-flex', 'flex-column');
         cardContainer.dataset.listingId = auction.id;
     
         const card = document.createElement('div');
