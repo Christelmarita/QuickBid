@@ -6,4 +6,4 @@ export const API_PROFILE_URL = `${API_BASE_URL}/auction/profile/`;
 export const queryString = document.location.search;
 export const params = new URLSearchParams(queryString);
 export const id = params.get("id");
-export const errorMessageElement = document.getElementById('error-message');
+export const errorMessageElement = document.getElementById('error-msg');

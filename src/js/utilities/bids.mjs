@@ -1,6 +1,5 @@
-import {
-    API_ALL_LISTINGS,
-} from '../const/constant.mjs';
+import { API_ALL_LISTINGS } from '../const/constant.mjs';
+import { getListings, createListingHTML } from '../auctions/listings.mjs';
 
 export async function placeBid(listingId, bidAmount) {
     try {
@@ -13,14 +12,11 @@ export async function placeBid(listingId, bidAmount) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
             },
-            body: JSON.stringify({
-                amount: bidAmount,
-            }),
+            body: JSON.stringify({ amount: bidAmount }),
         });
 
         if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(`Failed to place bid: ${errorMessage}`);
+            throw new Error(`Failed to place bid: ${await response.text()}`);
         }
 
         alert('Bid placed successfully!');
@@ -29,18 +25,21 @@ export async function placeBid(listingId, bidAmount) {
         console.error('Error placing bid:', error.message);
         alert('Failed to place bid. Please try again.');
     }
-}
 
-export function calculateHighestBid(listing) {
-    if (listing.bids && listing.bids.length > 0) {
-        return listing.bids[0];
-    } else {
-        return null;
+    try {
+        const updatedListings = await getListings();
+        createListingHTML(updatedListings);
+    } catch (error) {
+        console.error('Error updating listings:', error.message);
     }
 }
 
-export function updateBidFunctionality(isLoggedIn) {
+export function calculateHighestBid(listing) {
+    const sortedBids = (listing.bids || []).slice().sort((a, b) => b.amount - a.amount);
+    return sortedBids[0] || null;
+}
 
+export function updateBidFunctionality(isLoggedIn) {
     const bidForms = document.querySelectorAll('.card-container form.row.g-2');
     
     bidForms.forEach(bidForm => {

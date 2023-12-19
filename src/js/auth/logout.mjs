@@ -19,8 +19,12 @@ export function logout() {
 
 function hideLogoutButton() {
     const loggedInContent = document.getElementById('loggedInContent');
+    const loggedInProfile = document.getElementById('loggedInProfile');
     if (loggedInContent) {
         loggedInContent.style.display = 'none';
+    }
+    if (loggedInProfile) {
+        loggedInProfile.style.display = 'none';
     }
 }
 
