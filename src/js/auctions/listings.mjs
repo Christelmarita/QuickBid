@@ -29,11 +29,11 @@ export async function createListingHTML(listingContainer) {
 
     listingContainer.forEach(listing => {
         const cardContainer = document.createElement('div');
-        cardContainer.classList.add('col-md-4', 'mb-4', 'card-container');
+        cardContainer.classList.add('col-md-4', 'col-lg-3', 'mb-4', 'card-container');
         cardContainer.dataset.listingId = listing.id;
-
+    
         const card = document.createElement('div');
-        card.classList.add('card');
+        card.classList.add('card', 'd-flex', 'flex-column');
 
         const image = document.createElement('img');
         if (listing.media && listing.media.length > 0) {
@@ -42,11 +42,11 @@ export async function createListingHTML(listingContainer) {
             image.src = '../../../images/placeholder.png';
         }
         image.alt = listing.title;
-        image.classList.add('card-img-top', 'h-100');
+        image.classList.add('card-img-top', 'product-images');
         image.dataset.listingId = listing.id;
 
         const cardBody = document.createElement('div');
-        cardBody.classList.add('card-body');
+        cardBody.classList.add('card-body', 'd-flex', 'flex-column', 'justify-content-between');
         
         const title = document.createElement('h5');
         title.classList.add('card-title');
@@ -84,6 +84,7 @@ export async function createListingHTML(listingContainer) {
             endsAtText.textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
         } else {
             endsAtText.textContent = 'Auction has ended';
+            endsAtText.classList.add('text-danger');
             clearInterval(intervalId);
         }
     }
