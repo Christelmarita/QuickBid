@@ -1,9 +1,29 @@
-import { handleAuctionFormSubmit } from '../utilities/create-auction.mjs';
+import { API_ALL_LISTINGS } from '../const/constant.mjs';
+import { handleAuctionFormSubmit } from '../utilities/create-auction.mjs'
+import {calculateHighestBid} from '../utilities/bids.mjs';
+
+
+async function deleteAuction(auctionId) {
+    const accessToken = localStorage.getItem('accessToken');
+    const url = `${API_ALL_LISTINGS}/${auctionId}`;
+
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to delete auction');
+    }
+}
 
 export function getLocalUserProfile() {
     const userName = localStorage.getItem('userName');
     const userCredits = localStorage.getItem('userCredit');
     const avatarImg = document.querySelector('.profile-avatar');
+    const accessToken = localStorage.getItem('accessToken');
 
     if (avatarImg) {
         const avatarSrc = localStorage.getItem('userAvatar');
@@ -14,6 +34,7 @@ export function getLocalUserProfile() {
     return {
         name: userName || 'N/A',
         credits: userCredits || 0,
+        accessToken: accessToken,
     };
 }
 
@@ -21,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const userNameElement = document.getElementById('userName');
     const userCreditsElement = document.getElementById('userCredits');
     const updateAvatarBtn = document.getElementById('updateAvatarBtn');
+    const createdTab = document.getElementById('created');
     const auctionForm = document.getElementById('auctionForm');
 
     try {
@@ -31,16 +53,108 @@ document.addEventListener('DOMContentLoaded', function () {
             userCreditsElement.textContent = `${userProfile.credits} Credits`;
         }
 
+        if (updateAvatarBtn) {
+            updateAvatarBtn.addEventListener('click', updateAvatar);
+        }
+
+        fetchUserListings(userProfile.name, userProfile.accessToken, 'created').then((createdAuctions) => {
+            displayAuctions(createdTab, createdAuctions, true);
+        });
+
     } catch (error) {
         console.error('Profile fetch error:', error);
     }
 
-    if (updateAvatarBtn) {
-        updateAvatarBtn.addEventListener('click', updateAvatar);
-    }
-
     if (auctionForm) {
         auctionForm.addEventListener('submit', handleAuctionFormSubmit);
+    }
+
+    function fetchUserListings(userName, accessToken, type) {
+        const apiUrl = `https://api.noroff.dev/api/v1/auction/profiles/${encodeURIComponent(userName)}/listings?type=${type}`;
+
+        return fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch listings');
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                return [];
+            });
+    }
+
+    function displayAuctions(tab, auctions, isCreatedByUser) {
+        const auctionList = document.createElement('div');
+        auctionList.classList.add('row');
+    
+        auctions.forEach(auction => {
+            const auctionCard = createAuctionCard(auction, isCreatedByUser);
+            auctionList.appendChild(auctionCard);
+        });
+    
+        tab.appendChild(auctionList);
+    }
+    
+    function createAuctionCard(auction, isCreatedByUser) {
+        const cardContainer = document.createElement('div');
+        cardContainer.classList.add('col-12', 'col-md-6', 'col-lg-4', 'col-xl-3', 'mb-4', 'd-flex', 'flex-column');
+        cardContainer.dataset.listingId = auction.id;
+    
+        const card = document.createElement('div');
+        card.classList.add('card', 'card-body', 'auction-card', 'profile-card');
+    
+        const img = document.createElement('img');
+        img.src = auction.media && auction.media[0] || 'placeholder.jpg';
+        img.alt = 'Auction Image';
+        img.classList.add('card-img-top', 'auction-img', 'product-images');
+    
+        const cardBody = document.createElement('div');
+        cardBody.classList.add('d-flex', 'flex-column', 'flex-grow-1');
+    
+        const title = document.createElement('h6');
+        title.classList.add('card-title');
+        title.textContent = auction.title;
+    
+        const endsAt = document.createElement('p');
+        endsAt.classList.add('card-text', 'text-muted', 'mt-auto');
+        endsAt.textContent = `Ends at: ${new Date(auction.endsAt).toLocaleString()}`;
+    
+        cardBody.appendChild(title);
+        cardBody.appendChild(endsAt);
+    
+        if (isCreatedByUser) {
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'mt-2', 'ms-auto');
+            deleteBtn.textContent = 'Delete Auction';
+    
+            deleteBtn.addEventListener('click', async function () {
+                try {
+                    await deleteAuction(auction.id);
+                    alert('Auction deleted successfully!');
+                    cardContainer.remove();
+                } catch (error) {
+                    console.error('Error deleting auction:', error.message);
+                    alert('Error deleting auction. Please try again.');
+                }
+            });
+    
+            cardBody.appendChild(deleteBtn);
+        }
+    
+        card.appendChild(img);
+        card.appendChild(cardBody);
+    
+        cardContainer.appendChild(card);
+    
+        return cardContainer;
     }
 
     function updateAvatar() {
