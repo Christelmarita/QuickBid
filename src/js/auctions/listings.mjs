@@ -3,7 +3,7 @@ import {
     errorMessageElement,
 } from '../const/constant.mjs';
 
-import { updateBidFunctionality } from '../const/constant.mjs';
+import { placeBid, calculateHighestBid, updateBidFunctionality } from '../utilities/bids.mjs';
 
 export async function getListings() {
     try {
@@ -25,7 +25,7 @@ export async function getListings() {
 
 export async function createListingHTML(listingContainer) {
     const container = document.querySelector('.card-row');
-    const isLoggedIn = localStorage.getItem('jwtToken') !== null;
+    const isLoggedIn = localStorage.getItem('accessToken') !== null;
 
     listingContainer.forEach(listing => {
         const cardContainer = document.createElement('div');
@@ -116,46 +116,6 @@ export async function createListingHTML(listingContainer) {
     });
 }
 
-
-function calculateHighestBid(listing) {
-    if (listing.bids && listing.bids.length > 0) {
-        return listing.bids[0];
-    } else {
-        return null;
-    }
-}
-
-async function placeBid(listingId, bidAmount) {
-    try {
-        const accessToken = localStorage.getItem('accessToken');
-        const url = `${API_ALL_LISTINGS}/${listingId}/bids`;
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({
-                amount: bidAmount,
-            }),
-        });
-
-        if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(`Failed to place bid: ${errorMessage}`);
-        }
-
-        alert('Bid placed successfully!');
-        location.reload();
-    } catch (error) {
-        console.error('Error placing bid:', error.message);
-        alert('Failed to place bid. Please try again.');
-    }
-}
-
-
-
 document.addEventListener('DOMContentLoaded', async function () {
     try {
         const listings = await getListings();
@@ -164,12 +124,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         createListingHTML(listings);
 
         const isLoggedIn = localStorage.getItem('accessToken') !== null;
+        console.log('Is logged in:', isLoggedIn);
         updateBidFunctionality(isLoggedIn);
-
-        const bidForms = document.getElementsByClassName('bid-form');
-        Array.from(bidForms).forEach(bidForm => {
-            bidForm.style.display = isLoggedIn ? 'block' : 'none';
-        });
 
         const linkContainers = document.querySelectorAll('.card-img-top');
         linkContainers.forEach(linkContainer => {

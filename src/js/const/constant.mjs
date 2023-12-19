@@ -7,19 +7,3 @@ export const queryString = document.location.search;
 export const params = new URLSearchParams(queryString);
 export const id = params.get("id");
 export const errorMessageElement = document.getElementById('error-message');
-
-export function updateBidFunctionality(isLoggedIn) {
-    console.log(`Bid functionality enabled: ${isLoggedIn}`);
-
-    const bidForms = document.querySelectorAll('.card-container form.row.g-2');
-    
-    bidForms.forEach(bidForm => {
-        const bidAmountInput = bidForm.querySelector('[name="bidAmount"]');
-        const placeBidBtn = bidForm.querySelector('[type="submit"]');
-        
-        if (bidAmountInput && placeBidBtn) {
-            bidAmountInput.disabled = !isLoggedIn;
-            placeBidBtn.disabled = !isLoggedIn;
-        }
-    });
-}

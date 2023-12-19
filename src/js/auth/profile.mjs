@@ -49,9 +49,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const newAvatarUrl = document.getElementById('newAvatarUrl').value;
         const username = localStorage.getItem('userName');
         const accessToken = localStorage.getItem('accessToken');
-        const apiUrl = `https://api.noroff.dev/api/v1/auction/profiles/${encodeURIComponent(username)}/media`;
+        const url = `https://api.noroff.dev/api/v1/auction/profiles/${encodeURIComponent(username)}/media`;
 
-        fetch(apiUrl, {
+        fetch(url, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,

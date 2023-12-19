@@ -3,7 +3,8 @@ import {
     errorMessageElement,
 } from '../const/constant.mjs';
 
-import { updateBidFunctionality } from '../const/constant.mjs';
+import { updateBidFunctionality } from '../utilities/bids.mjs';
+
 
 export async function loginUser(username, password) {
     try {
@@ -31,8 +32,8 @@ export async function loginUser(username, password) {
             localStorage.setItem('userAvatar', data.avatar);
         }
 
-
         checkAndHideForms();
+        updateBidFunctionality(true);
 
     } catch (error) {
         console.error('Error:', error);
@@ -45,6 +46,7 @@ function checkAndHideForms() {
     
     const userNameElement = document.getElementById('userName');
     const userCreditsElement = document.getElementById('userCredits');
+    const headerContentDiv = document.querySelector('.bg-dark.header-content');
 
     if (accessToken && userNameElement && userCreditsElement) {
         const userName = localStorage.getItem('userName');
@@ -54,9 +56,18 @@ function checkAndHideForms() {
             userNameElement.textContent = userName;
             userCreditsElement.textContent = `${userCredits} Credits`;
 
+            updateBidFunctionality();
             hideLoginRegisterForms();
             showLogoutButton();
-            updateBidFunctionality(true);
+
+
+            if (headerContentDiv) {
+                headerContentDiv.style.display = 'block';
+            }
+        }
+    } else {
+        if (headerContentDiv) {
+            headerContentDiv.style.display = 'none';
         }
     }
 }
@@ -102,4 +113,3 @@ document.addEventListener('DOMContentLoaded', async function () {
     checkAndHideForms();
     updateHeader();
 });
-

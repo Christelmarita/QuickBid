@@ -1,4 +1,4 @@
-import { updateBidFunctionality } from '../const/constant.mjs';
+import { updateBidFunctionality } from '../utilities/bids.mjs';
 
 export function logout() {
     try {
@@ -6,6 +6,12 @@ export function logout() {
         hideLogoutButton();
         showLoginRegisterForms();
         updateBidFunctionality(false);
+
+        const headerContentDiv = document.querySelector('.bg-dark.header-content');
+        if (headerContentDiv) {
+            headerContentDiv.style.display = 'none';
+        }
+
     } catch (error) {
         console.error('Error during logout:', error);
     }
@@ -22,19 +28,6 @@ function showLoginRegisterForms() {
     const loginRegisterContainer = document.getElementById('loginRegisterContainer');
     if (loginRegisterContainer) {
         loginRegisterContainer.style.display = 'block';
-    }
-}
-
-function disableBidFunctionality() {
-    console.log('Disabling bid functionality...');
-    const bidAmountInput = document.getElementById('bidAmount');
-    const placeBidBtn = document.getElementById('placeBidBtn');
-
-    if (bidAmountInput && placeBidBtn) {
-        bidAmountInput.setAttribute('disabled', 'true');
-        placeBidBtn.setAttribute('disabled', 'true');
-    } else {
-        console.error('Bid functionality elements not found.');
     }
 }
 

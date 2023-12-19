@@ -1,5 +1,9 @@
-import { errorMessageElement} from '../const/constant.mjs';
-import { API_ALL_LISTINGS } from '../const/constant.mjs';
+import {
+    API_ALL_LISTINGS,
+    errorMessageElement,
+} from '../const/constant.mjs';
+
+import { placeBid, updateBidFunctionality } from '../utilities/bids.mjs';
 
 async function displayListingDetails(listingId) {
     try {
@@ -14,6 +18,7 @@ async function displayListingDetails(listingId) {
 
         titleElement.textContent = listing.title;
         authorElement.textContent = 'Seller: ' + listing.seller.name;
+
 
         if (listing.media && listing.media.length > 0) {
             imageElement.src = listing.media[0];
@@ -58,11 +63,63 @@ async function displayListingDetails(listingId) {
             bidHistory.appendChild(li);
         }
 
+        
+
+        updateBidFunctionality(localStorage.getItem('accessToken') !== null);
+
+        const bidFormContainer = document.getElementById('bidFormContainer');
+        bidFormContainer.innerHTML = ''; 
+
+        if (localStorage.getItem('accessToken') !== null) {
+            const bidForm = document.createElement('form');
+            bidForm.classList.add('row', 'g-2', 'bid-form');
+
+            const bidAmountCol = document.createElement('div');
+            bidAmountCol.classList.add('col-md-6');
+
+            const bidAmountInput = document.createElement('input');
+            bidAmountInput.type = 'number';
+            bidAmountInput.classList.add('form-control', 'bid-amount-input');
+            bidAmountInput.name = 'bidAmount';
+            bidAmountInput.required = true;
+
+            const bidLabel = document.createElement('label');
+            bidLabel.classList.add('form-label');
+            bidLabel.textContent = 'Your Bid:';
+
+            const placeBidBtn = document.createElement('button');
+            placeBidBtn.type = 'submit';
+            placeBidBtn.classList.add('btn', 'btn-primary', 'place-bid-btn');
+            placeBidBtn.textContent = 'Place Bid';
+
+            bidForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const bidAmountInputValue = bidAmountInput.value.trim();
+                const bidAmount = parseFloat(bidAmountInputValue);
+
+                if (isNaN(bidAmount) || bidAmount <= 0) {
+                    alert('Please enter a valid bid amount.');
+                    return;
+                }
+
+                await placeBid(listing.id, bidAmount);
+                await displayListingDetails(listingId);
+            });
+
+            bidAmountCol.appendChild(bidLabel);
+            bidAmountCol.appendChild(bidAmountInput);
+            bidForm.appendChild(bidAmountCol);
+            bidForm.appendChild(placeBidBtn);
+
+            bidFormContainer.appendChild(bidForm);
+        }
+
     } catch (error) {
         console.error('Error displaying listing details:', error.message);
         errorMessageElement.textContent = 'Displaying listing details failed. Please try again.';
     }
 }
+
 
 function openModal(imageSrc) {
     const modalImage = document.getElementById('modalImage');
