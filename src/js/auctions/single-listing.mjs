@@ -117,7 +117,8 @@ async function displayListingDetails(listingId) {
 
     } catch (error) {
         console.error('Error displaying listing details:', error.message);
-        errorMessageElement.textContent = 'Displaying listing details failed. Please try again.';
+        errorMessageElement.textContent = 'Displaying listing details failed. Please try again';
+        errorMessageElement.classList.add('my-5');
     }
 }
 
@@ -133,6 +134,8 @@ function openModal(imageSrc) {
             imageModal.show();
         } catch (error) {
             console.error('Error during modal initialization:', error);
+            errorMessageElement.textContent = 'Could not open modal. Please try again';
+            errorMessageElement.classList.add('my-5');
         }
     }, 100);
 }
@@ -150,7 +153,8 @@ export async function getListingById(listingId) {
         return await response.json();
     } catch (error) {
         console.error('Error fetching listing details:', error.message);
-        errorMessageElement.textContent = 'Fetching listing details failed. Please try again.';
+        errorMessageElement.textContent = 'Fetching listing details failed. Please try again';
+        errorMessageElement.classList.add('my-5');
         throw error;
     }
 }
@@ -164,11 +168,12 @@ document.addEventListener('DOMContentLoaded', async function () {
             await displayListingDetails(listingId);
         } else {
             console.error('Listing ID is missing in the URL parameters.');
-            errorMessageElement.textContent = 'Listing ID is missing. Please try again.';
         }
 
     } catch (error) {
         console.error('Error in listing page initialization:', error.message);
+        errorMessageElement.textContent = 'Listing ID is missing. Please try again';
+        errorMessageElement.classList.add('my-5');
     }
 });
 

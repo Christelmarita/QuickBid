@@ -1,4 +1,4 @@
-import { API_ALL_LISTINGS } from '../const/constant.mjs';
+import { API_ALL_LISTINGS, errorMessageElement } from '../const/constant.mjs';
 import { handleAuctionFormSubmit } from '../utilities/create-auction.mjs'
 
 
@@ -19,22 +19,27 @@ async function deleteAuction(auctionId) {
 }
 
 export function getLocalUserProfile() {
-    const userName = localStorage.getItem('userName');
-    const userCredits = localStorage.getItem('userCredit');
-    const avatarImg = document.querySelector('.profile-avatar');
-    const accessToken = localStorage.getItem('accessToken');
+    try {
+        const userName = localStorage.getItem('userName');
+        const userCredits = localStorage.getItem('userCredit');
+        const avatarImg = document.querySelector('.profile-avatar');
+        const accessToken = localStorage.getItem('accessToken');
 
-    if (avatarImg) {
-        const avatarSrc = localStorage.getItem('userAvatar');
-        avatarImg.src = avatarSrc || '../../../images/placeholder.png';
-        avatarImg.alt = 'User Avatar';
+        if (avatarImg) {
+            const avatarSrc = localStorage.getItem('userAvatar');
+            avatarImg.src = avatarSrc || '../../../images/placeholder.png';
+            avatarImg.alt = 'User Avatar';
+        }
+
+        return {
+            name: userName || 'N/A',
+            credits: userCredits || 0,
+            accessToken: accessToken,
+        };
+    } catch (error) {
+        errorMessageElement.textContent = 'Displaying profile failed. Please try again.';
+        errorMessageElement.classList.add('mt-5');
     }
-
-    return {
-        name: userName || 'N/A',
-        credits: userCredits || 0,
-        accessToken: accessToken,
-    };
 }
 
 document.addEventListener('DOMContentLoaded', function () {

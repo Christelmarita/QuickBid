@@ -27,6 +27,8 @@ export async function handleAuctionFormSubmit(event) {
         createListingHTML(updatedListings);
 
         alert('Auction created successfully!');
+        location.reload();
+        document.getElementById('auctionForm').reset();
     } catch (error) {
         console.error('Error:', error);
         alert('Error creating auction. Please try again.');

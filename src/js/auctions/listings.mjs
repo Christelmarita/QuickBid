@@ -19,6 +19,7 @@ export async function getListings() {
     } catch (error) {
         console.error('Error fetching auction listings:', error.message);
         errorMessageElement.textContent = 'Fetching failed. Please try again.';
+        errorMessageElement.classList.add('mt-5');
         throw error;
     }
 }
@@ -148,12 +149,10 @@ export async function createListingHTML(listingContainer) {
 document.addEventListener('DOMContentLoaded', async function () {
     try {
         const listings = await getListings();
-        console.log('Fetched listings:', listings);
 
         createListingHTML(listings);
 
         const isLoggedIn = localStorage.getItem('accessToken') !== null;
-        console.log('Is logged in:', isLoggedIn);
         updateBidFunctionality(isLoggedIn);
 
         const linkContainers = document.querySelectorAll('.card-img-top');
@@ -169,5 +168,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     } catch (error) {
         console.error('Error in initialization:', error.message);
+        errorMessageElement.textContent = 'Fetching failed. Please try again.';
+        errorMessageElement.classList.add('mt-5');
     }
 });

@@ -7,3 +7,6 @@ export const queryString = document.location.search;
 export const params = new URLSearchParams(queryString);
 export const id = params.get("id");
 export const errorMessageElement = document.getElementById('error-msg');
+errorMessageElement.style.textAlign = 'center';
+errorMessageElement.style.color = 'red';
+errorMessageElement.style.fontWeight = 'bold';

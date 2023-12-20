@@ -19,6 +19,8 @@ export async function registerUser(url, userData) {
         }
     } catch (error) {
         console.error("Error:", error);
+        errorMessageElement.textContent = 'Failed to register user. Please try again';
+        errorMessageElement.classList.add('my-5');
     }
 }
 
@@ -42,6 +44,9 @@ function showRegistrationSuccess() {
         registrationSuccessContainer.appendChild(successMessage);
         registrationSuccessContainer.appendChild(loginLink);
         registrationSuccessContainer.style.display = 'block';
+    } else {
+        errorMessageElement.textContent = 'Failed to register user. Please try again';
+        errorMessageElement.classList.add('my-5');
     }
 }
 
