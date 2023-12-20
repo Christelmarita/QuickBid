@@ -1,7 +1,4 @@
-import {
-    API_LOGIN_URL,
-    errorMessageElement
-} from '../const/constant.mjs';
+import { API_LOGIN_URL } from '../const/constant.mjs';
 
 import { updateBidFunctionality } from '../utilities/bids.mjs';
 
