@@ -1,0 +1,12 @@
+export const API_BASE_URL = 'https://api.noroff.dev/api/v1';
+export const API_REGISTER_URL = `${API_BASE_URL}/auction/auth/register`;
+export const API_LOGIN_URL = `${API_BASE_URL}/auction/auth/login`;
+export const API_ALL_LISTINGS = `${API_BASE_URL}/auction/listings`;
+export const API_PROFILE_URL = `${API_BASE_URL}/auction/profiles/`;
+export const queryString = document.location.search;
+export const params = new URLSearchParams(queryString);
+export const id = params.get("id");
+export const errorMessageElement = document.getElementById('error-msg');
+errorMessageElement.style.textAlign = 'center';
+errorMessageElement.style.color = 'red';
+errorMessageElement.style.fontWeight = 'bold';
