@@ -19,6 +19,7 @@ export async function handleAuctionFormSubmit(event) {
     };
 
     try {
+
         document.getElementById('createAuctionBtn').disabled = true;
 
         await createAuction(requestData);
@@ -47,18 +48,31 @@ export async function createAuction(data) {
     const accessToken = localStorage.getItem('accessToken');
     const url = `${API_ALL_LISTINGS}`;
 
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
+    try {
 
-    if (!response.ok) {
-        throw new Error('Failed to create auction');
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            const responseBody = await response.json();
+            
+            if (responseBody.errors) {
+                throw new Error('Failed to create auction');
+            } else {
+                console.error('Unknown server error:', responseBody);
+                throw new Error('Failed to create auction');
+            }
+        }
+
+        return response.json();
+    } catch (error) {
+        console.error('Error creating auction:', error);
+        throw error;
     }
-
-    return response.json();
 }

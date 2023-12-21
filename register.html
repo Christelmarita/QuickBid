@@ -45,6 +45,18 @@
               >
             </li>
           </ul>
+          <form class="d-flex align-self-center my-3" id="searchForm">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              id="searchInput"
+            />
+            <button class="btn btn-outline-secondary" type="submit">
+              Search
+            </button>
+          </form>
         </div>
       </div>
     </nav>
@@ -86,6 +98,7 @@
                     class="form-control"
                     id="password"
                     name="password"
+                    placeholder="Must be minimum 8 characters"
                     minlength="8"
                     required
                   />
@@ -101,7 +114,9 @@
                 </div>
               </form>
               <div class="text-center mb-3">
-                <a class="link-primary text-center nav-link" href="/index.html"
+                <a
+                  class="link-secondary text-center nav-link"
+                  href="/index.html"
                   >Cancel</a
                 >
               </div>
@@ -116,7 +131,7 @@
       </div>
     </div>
     <footer class="py-3 mt-4 bg-primary">
-      <p class="text-center text-white-50">© 2023 Christel Østerbøe</p>
+      <p class="text-center">© 2023 Christel Østerbøe</p>
     </footer>
   </body>
 </html>
