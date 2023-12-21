@@ -4,6 +4,20 @@ import {
 } from '../const/constant.mjs';
 
 import { placeBid, calculateHighestBid, updateBidFunctionality } from '../utilities/bids.mjs';
+import { handleSearch } from '../utilities/search.mjs';
+
+function attachEventListeners() {
+    const linkContainers = document.querySelectorAll('.card-img-top');
+    linkContainers.forEach(linkContainer => {
+        linkContainer.style.cursor = 'pointer';
+        linkContainer.addEventListener('click', function () {
+            const listingId = linkContainer.dataset.listingId;
+            if (listingId !== undefined) {
+                window.location.href = `../../../listing.html?id=${listingId}`;
+            }
+        });
+    });
+}
 
 export async function getListings() {
     try {
@@ -27,6 +41,9 @@ export async function getListings() {
 export async function createListingHTML(listingContainer) {
     const container = document.querySelector('.card-row');
     const isLoggedIn = localStorage.getItem('accessToken') !== null;
+
+    const fragment = document.createDocumentFragment();
+    container.innerHTML = '';
 
     listingContainer.forEach(listing => {
         const cardContainer = document.createElement('div');
@@ -142,8 +159,10 @@ export async function createListingHTML(listingContainer) {
 
     card.append(image, cardBody);
     cardContainer.appendChild(card);
-    container.appendChild(cardContainer);
+    fragment.appendChild(cardContainer);
     });
+    container.appendChild(fragment);
+    attachEventListeners();
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -155,20 +174,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         const isLoggedIn = localStorage.getItem('accessToken') !== null;
         updateBidFunctionality(isLoggedIn);
 
-        const linkContainers = document.querySelectorAll('.card-img-top');
-        linkContainers.forEach(linkContainer => {
-            linkContainer.style.cursor = 'pointer';
-            linkContainer.addEventListener('click', function () {
-                const listingId = linkContainer.dataset.listingId;
-                if (listingId !== undefined) {
-                    window.location.href = `../../../listing.html?id=${listingId}`;
-                }
-            });
-        });
+        const searchForm = document.getElementById('searchForm');
+        searchForm.addEventListener('submit', handleSearch);
 
     } catch (error) {
         console.error('Error in initialization:', error.message);
         errorMessageElement.textContent = 'Fetching failed. Please try again.';
-        errorMessageElement.classList.add('mt-5');
+        errorMessageElement.classList.add('my-5');
     }
 });

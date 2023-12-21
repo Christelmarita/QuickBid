@@ -4,6 +4,7 @@ import {
 } from '../const/constant.mjs';
 
 import { placeBid, updateBidFunctionality } from '../utilities/bids.mjs';
+import { handleSearch } from '../utilities/search.mjs';
 
 async function displayListingDetails(listingId) {
     try {
@@ -169,12 +170,16 @@ document.addEventListener('DOMContentLoaded', async function () {
         } else {
             console.error('Listing ID is missing in the URL parameters.');
         }
+        
 
     } catch (error) {
         console.error('Error in listing page initialization:', error.message);
         errorMessageElement.textContent = 'Listing ID is missing. Please try again';
         errorMessageElement.classList.add('my-5');
     }
+
+    const searchForm = document.getElementById('searchForm');
+    searchForm.addEventListener('submit', handleSearch);
 });
 
 

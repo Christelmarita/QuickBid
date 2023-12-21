@@ -1,4 +1,4 @@
-import { API_ALL_LISTINGS, errorMessageElement } from '../const/constant.mjs';
+import { API_ALL_LISTINGS, API_PROFILE_URL, errorMessageElement } from '../const/constant.mjs';
 import { handleAuctionFormSubmit } from '../utilities/create-auction.mjs'
 
 
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function fetchUserListings(userName, accessToken, type) {
-        const apiUrl = `https://api.noroff.dev/api/v1/auction/profiles/${encodeURIComponent(userName)}/listings?type=${type}`;
+        const apiUrl = `${API_PROFILE_URL}${encodeURIComponent(userName)}/listings?type=${type}`;
 
         return fetch(apiUrl, {
             method: 'GET',
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const newAvatarUrl = document.getElementById('newAvatarUrl').value;
         const username = localStorage.getItem('userName');
         const accessToken = localStorage.getItem('accessToken');
-        const url = `https://api.noroff.dev/api/v1/auction/profiles/${encodeURIComponent(username)}/media`;
+        const url = `${API_PROFILE_URL}${encodeURIComponent(username)}/media`;
 
         fetch(url, {
             method: 'PUT',
