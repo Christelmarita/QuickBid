@@ -47,19 +47,20 @@
               <a class="nav-link pe-3 py-3" href="index.html">Auctions</a>
             </li>
           </ul>
-          <form class="d-flex align-self-center my-3" role="search">
+          <form class="d-flex align-self-center my-3" id="searchForm">
             <input
               class="form-control me-2"
               type="search"
               placeholder="Search"
               aria-label="Search"
+              id="searchInput"
             />
             <button class="btn btn-outline-secondary" type="submit">
               Search
             </button>
           </form>
           <div id="loggedInContent" style="display: none">
-            <button class="btn btn-primary mb-2" id="logoutBtn">Logout</button>
+            <button class="btn btn-primary" id="logoutBtn">Logout</button>
           </div>
         </div>
       </div>
@@ -81,6 +82,7 @@
         </div>
       </div>
     </div>
+    <div id="error-msg"></div>
     <div class="container mt-4">
       <div class="row justify-content-end">
         <div class="col-lg-6 my-3">
@@ -132,7 +134,7 @@
             class="form-control mt-3"
             placeholder="Enter New Avatar URL"
           />
-          <button id="updateAvatarBtn" class="btn btn-primary btn-sm mt-2">
+          <button id="updateAvatarBtn" class="btn btn-primary btn-sm mt-2 mb-5">
             Update Avatar
           </button>
         </div>

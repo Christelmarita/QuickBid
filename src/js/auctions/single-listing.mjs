@@ -4,6 +4,7 @@ import {
 } from '../const/constant.mjs';
 
 import { placeBid, updateBidFunctionality } from '../utilities/bids.mjs';
+import { handleSearch } from '../utilities/search.mjs';
 
 async function displayListingDetails(listingId) {
     try {
@@ -82,9 +83,10 @@ async function displayListingDetails(listingId) {
             bidAmountInput.classList.add('form-control', 'bid-amount-input');
             bidAmountInput.name = 'bidAmount';
             bidAmountInput.required = true;
+            bidAmountInput.style.appearance = 'textfield';
 
             const bidLabel = document.createElement('label');
-            bidLabel.classList.add('form-label');
+            bidLabel.classList.add('form-label', 'mt-4', 'h2');
             bidLabel.textContent = 'Your Bid:';
 
             const placeBidBtn = document.createElement('button');
@@ -116,7 +118,8 @@ async function displayListingDetails(listingId) {
 
     } catch (error) {
         console.error('Error displaying listing details:', error.message);
-        errorMessageElement.textContent = 'Displaying listing details failed. Please try again.';
+        errorMessageElement.textContent = 'Displaying listing details failed. Please try again';
+        errorMessageElement.classList.add('my-5');
     }
 }
 
@@ -132,6 +135,8 @@ function openModal(imageSrc) {
             imageModal.show();
         } catch (error) {
             console.error('Error during modal initialization:', error);
+            errorMessageElement.textContent = 'Could not open modal. Please try again';
+            errorMessageElement.classList.add('my-5');
         }
     }, 100);
 }
@@ -149,7 +154,8 @@ export async function getListingById(listingId) {
         return await response.json();
     } catch (error) {
         console.error('Error fetching listing details:', error.message);
-        errorMessageElement.textContent = 'Fetching listing details failed. Please try again.';
+        errorMessageElement.textContent = 'Fetching listing details failed. Please try again';
+        errorMessageElement.classList.add('my-5');
         throw error;
     }
 }
@@ -163,12 +169,17 @@ document.addEventListener('DOMContentLoaded', async function () {
             await displayListingDetails(listingId);
         } else {
             console.error('Listing ID is missing in the URL parameters.');
-            errorMessageElement.textContent = 'Listing ID is missing. Please try again.';
         }
+        
 
     } catch (error) {
         console.error('Error in listing page initialization:', error.message);
+        errorMessageElement.textContent = 'Listing ID is missing. Please try again';
+        errorMessageElement.classList.add('my-5');
     }
+
+    const searchForm = document.getElementById('searchForm');
+    searchForm.addEventListener('submit', handleSearch);
 });
 
 

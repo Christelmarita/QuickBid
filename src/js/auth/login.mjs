@@ -1,7 +1,4 @@
-import {
-    API_LOGIN_URL,
-    errorMessageElement,
-} from '../const/constant.mjs';
+import { API_LOGIN_URL } from '../const/constant.mjs';
 
 import { updateBidFunctionality } from '../utilities/bids.mjs';
 
@@ -37,7 +34,7 @@ export async function loginUser(username, password) {
 
     } catch (error) {
         console.error('Error:', error);
-        errorMessageElement.textContent = 'Login failed. Please try again.';
+        alert('Login failed. Please try again');
     }
 }
 

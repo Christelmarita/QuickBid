@@ -1,6 +1,5 @@
-import { API_ALL_LISTINGS } from '../const/constant.mjs';
+import { API_ALL_LISTINGS, API_PROFILE_URL, errorMessageElement } from '../const/constant.mjs';
 import { handleAuctionFormSubmit } from '../utilities/create-auction.mjs'
-import {calculateHighestBid} from '../utilities/bids.mjs';
 
 
 async function deleteAuction(auctionId) {
@@ -20,22 +19,27 @@ async function deleteAuction(auctionId) {
 }
 
 export function getLocalUserProfile() {
-    const userName = localStorage.getItem('userName');
-    const userCredits = localStorage.getItem('userCredit');
-    const avatarImg = document.querySelector('.profile-avatar');
-    const accessToken = localStorage.getItem('accessToken');
+    try {
+        const userName = localStorage.getItem('userName');
+        const userCredits = localStorage.getItem('userCredit');
+        const avatarImg = document.querySelector('.profile-avatar');
+        const accessToken = localStorage.getItem('accessToken');
 
-    if (avatarImg) {
-        const avatarSrc = localStorage.getItem('userAvatar');
-        avatarImg.src = avatarSrc || '../../../images/placeholder.png';
-        avatarImg.alt = 'User Avatar';
+        if (avatarImg) {
+            const avatarSrc = localStorage.getItem('userAvatar');
+            avatarImg.src = avatarSrc || '../../../images/placeholder.png';
+            avatarImg.alt = 'User Avatar';
+        }
+
+        return {
+            name: userName || 'N/A',
+            credits: userCredits || 0,
+            accessToken: accessToken,
+        };
+    } catch (error) {
+        errorMessageElement.textContent = 'Displaying profile failed. Please try again.';
+        errorMessageElement.classList.add('mt-5');
     }
-
-    return {
-        name: userName || 'N/A',
-        credits: userCredits || 0,
-        accessToken: accessToken,
-    };
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -70,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function fetchUserListings(userName, accessToken, type) {
-        const apiUrl = `https://api.noroff.dev/api/v1/auction/profiles/${encodeURIComponent(userName)}/listings?type=${type}`;
+        const apiUrl = `${API_PROFILE_URL}${encodeURIComponent(userName)}/listings?type=${type}`;
 
         return fetch(apiUrl, {
             method: 'GET',
@@ -104,21 +108,22 @@ document.addEventListener('DOMContentLoaded', function () {
     
     function createAuctionCard(auction, isCreatedByUser) {
         const cardContainer = document.createElement('div');
-        cardContainer.classList.add('col-12', 'col-md-6', 'col-lg-4', 'col-xl-3', 'mb-4', 'd-flex', 'flex-column');
+        cardContainer.classList.add('col-12', 'col-md-6', 'col-lg-4', 'mb-4', 'd-flex', 'flex-column');
         cardContainer.dataset.listingId = auction.id;
     
         const card = document.createElement('div');
         card.classList.add('card', 'card-body', 'auction-card', 'profile-card');
+        
     
         const img = document.createElement('img');
         img.src = auction.media && auction.media[0] || 'placeholder.jpg';
         img.alt = 'Auction Image';
-        img.classList.add('card-img-top', 'auction-img', 'product-images');
-    
+        img.classList.add('card-img-top', 'auction-img', 'product-images', 'mb-3');
+
         const cardBody = document.createElement('div');
         cardBody.classList.add('d-flex', 'flex-column', 'flex-grow-1');
     
-        const title = document.createElement('h6');
+        const title = document.createElement('h5');
         title.classList.add('card-title');
         title.textContent = auction.title;
     
@@ -161,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const newAvatarUrl = document.getElementById('newAvatarUrl').value;
         const username = localStorage.getItem('userName');
         const accessToken = localStorage.getItem('accessToken');
-        const url = `https://api.noroff.dev/api/v1/auction/profiles/${encodeURIComponent(username)}/media`;
+        const url = `${API_PROFILE_URL}${encodeURIComponent(username)}/media`;
 
         fetch(url, {
             method: 'PUT',
