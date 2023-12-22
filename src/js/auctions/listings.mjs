@@ -66,7 +66,7 @@ export async function createListingHTML(listingContainer) {
         const cardBody = document.createElement('div');
         cardBody.classList.add('card-body', 'd-flex', 'flex-column', 'justify-content-between');
         
-        const title = document.createElement('h5');
+        const title = document.createElement('h3');
         title.classList.add('card-title');
         title.textContent = listing.title;
         
