@@ -72,6 +72,7 @@ export async function createListingHTML(listingContainer) {
         
         const bidText = document.createElement('p');
         bidText.classList.add('card-text');
+        bidText.classList.add('d-flex', 'flex-column')
         
         const highestBid = calculateHighestBid(listing);
         const strongElement = document.createElement('strong');
