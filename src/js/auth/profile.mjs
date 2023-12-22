@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const cardBody = document.createElement('div');
         cardBody.classList.add('d-flex', 'flex-column', 'flex-grow-1');
     
-        const title = document.createElement('h5');
+        const title = document.createElement('h3');
         title.classList.add('card-title');
         title.textContent = auction.title;
     
