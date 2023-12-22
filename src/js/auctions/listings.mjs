@@ -1,8 +1,10 @@
-import { API_ALL_LISTINGS, errorMessageElement } from '../const/constant.mjs';
+import {
+    API_ALL_LISTINGS,
+    errorMessageElement,
+} from '../const/constant.mjs';
+
 import { placeBid, calculateHighestBid, updateBidFunctionality } from '../utilities/bids.mjs';
 import { handleSearch } from '../utilities/search.mjs';
-
-let currentPage = 1;
 
 function attachEventListeners() {
     const linkContainers = document.querySelectorAll('.card-img-top');
@@ -17,12 +19,10 @@ function attachEventListeners() {
     });
 }
 
-export async function getListings(page = 1) {
+export async function getListings() {
     try {
         const timestamp = new Date().getTime();
-        const perPage = 16;
-        const offset = (page - 1) * perPage;
-        const url = `${API_ALL_LISTINGS}?_bids=true&_timestamp=${timestamp}&sort=created&offset=${offset}&limit=${perPage}`;
+        const url = `${API_ALL_LISTINGS}?_bids=true&_timestamp=${timestamp}&sort=created`;
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -43,12 +43,13 @@ export async function createListingHTML(listingContainer) {
     const isLoggedIn = localStorage.getItem('accessToken') !== null;
 
     const fragment = document.createDocumentFragment();
+    container.innerHTML = '';
 
     listingContainer.forEach(listing => {
         const cardContainer = document.createElement('div');
         cardContainer.classList.add('col-md-4', 'col-lg-3', 'mb-4', 'card-container');
         cardContainer.dataset.listingId = listing.id;
-
+    
         const card = document.createElement('div');
         card.classList.add('card', 'd-flex', 'flex-column');
 
@@ -65,7 +66,7 @@ export async function createListingHTML(listingContainer) {
         const cardBody = document.createElement('div');
         cardBody.classList.add('card-body', 'd-flex', 'flex-column', 'justify-content-between');
         
-        const title = document.createElement('h5');
+        const title = document.createElement('h3');
         title.classList.add('card-title');
         title.textContent = listing.title;
         
@@ -87,99 +88,88 @@ export async function createListingHTML(listingContainer) {
         const endsAtText = document.createElement('p');
         endsAtText.classList.add('card-text');
 
-        const endsAtDate = new Date(listing.endsAt);
-
         let intervalId;
 
         function updateCountdown() {
-            const now = new Date();
-            const timeRemaining = endsAtDate - now;
+        const now = new Date();
+        const timeRemaining = endsAtDate - now;
 
-            if (timeRemaining > 0) {
-                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+        if (timeRemaining > 0) {
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
 
-                endsAtText.textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-            } else {
-                endsAtText.textContent = 'Auction has ended';
-                endsAtText.classList.add('text-danger');
-                clearInterval(intervalId);
-            }
+            endsAtText.textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        } else {
+            endsAtText.textContent = 'Auction has ended';
+            endsAtText.classList.add('text-danger');
+            clearInterval(intervalId);
         }
+    }
 
-        updateCountdown(); 
+    const endsAtDate = new Date(listing.endsAt);
+    updateCountdown(); 
 
-        intervalId = setInterval(updateCountdown, 1000);
+    intervalId = setInterval(updateCountdown, 1000);
 
-        bidText.appendChild(strongElement);
+    bidText.appendChild(strongElement);
 
-        const bidForm = document.createElement('form');
-        bidForm.classList.add('row', 'g-2', 'bid-form');
+    const bidForm = document.createElement('form');
+    bidForm.classList.add('row', 'g-2', 'bid-form');
         
-        const bidAmountCol = document.createElement('div');
-        bidAmountCol.classList.add('col-md-6');
+    const bidAmountCol = document.createElement('div');
+    bidAmountCol.classList.add('col-md-6');
         
-        const bidAmountInput = document.createElement('input');
-        bidAmountInput.type = 'number';
-        bidAmountInput.classList.add('form-control', 'bid-amount-input');
-        bidAmountInput.name = 'bidAmount';
-        bidAmountInput.required = true;
-        bidAmountInput.disabled = !isLoggedIn;
-        bidAmountInput.style.appearance = 'textfield';
+    const bidAmountInput = document.createElement('input');
+    bidAmountInput.type = 'number';
+    bidAmountInput.classList.add('form-control', 'bid-amount-input');
+    bidAmountInput.name = 'bidAmount';
+    bidAmountInput.required = true;
+    bidAmountInput.disabled = !isLoggedIn;
+    bidAmountInput.style.appearance = 'textfield';
         
-        const bidLabel = document.createElement('label');
-        bidLabel.classList.add('form-label');
-        bidLabel.textContent = 'Your Bid:';
+    const bidLabel = document.createElement('label');
+    bidLabel.classList.add('form-label');
+    bidLabel.textContent = 'Your Bid:';
         
-        const placeBidBtn = document.createElement('button');
-        placeBidBtn.type = 'submit';
-        placeBidBtn.classList.add('btn', 'btn-primary', 'place-bid-btn');
-        placeBidBtn.disabled = !isLoggedIn;
-        placeBidBtn.textContent = 'Place Bid';
+    const placeBidBtn = document.createElement('button');
+    placeBidBtn.type = 'submit';
+    placeBidBtn.classList.add('btn', 'btn-primary', 'place-bid-btn');
+    placeBidBtn.disabled = !isLoggedIn;
+    placeBidBtn.textContent = 'Place Bid';
         
-        bidForm.addEventListener('submit', async function (event) {
-            event.preventDefault();
-            const bidAmountInputValue = bidAmountInput.value.trim();
-            const bidAmount = parseFloat(bidAmountInputValue);
+    bidForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const bidAmountInputValue = bidAmountInput.value.trim();
+        const bidAmount = parseFloat(bidAmountInputValue);
         
-            if (isNaN(bidAmount) || bidAmount <= 0) {
-                alert('Please enter a valid bid amount.');
-                return;
-            }
-            await placeBid(listing.id, bidAmount);
-        });
-
-        cardBody.append(title, bidText, endsAtText, bidForm);
-        bidText.appendChild(strongElement);
-        bidAmountCol.appendChild(bidLabel);
-        bidAmountCol.appendChild(bidAmountInput);
-        bidForm.appendChild(bidAmountCol);
-        bidForm.appendChild(placeBidBtn);
-
-        card.append(image, cardBody);
-        cardContainer.appendChild(card);
-        fragment.appendChild(cardContainer);
+        if (isNaN(bidAmount) || bidAmount <= 0) {
+            alert('Please enter a valid bid amount.');
+            return;
+        }
+        await placeBid(listing.id, bidAmount);
     });
 
+    cardBody.append(title, bidText, endsAtText, bidForm);
+    bidText.appendChild(strongElement);
+    bidAmountCol.appendChild(bidLabel);
+    bidAmountCol.appendChild(bidAmountInput);
+    bidForm.appendChild(bidAmountCol);
+    bidForm.appendChild(placeBidBtn);
+
+    card.append(image, cardBody);
+    cardContainer.appendChild(card);
+    fragment.appendChild(cardContainer);
+    });
     container.appendChild(fragment);
     attachEventListeners();
 }
 
-async function loadMoreListings() {
-    try {
-        currentPage++;
-        const listings = await getListings(currentPage);
-        createListingHTML(listings);
-    } catch (error) {
-        console.error('Error loading more listings:', error.message);
-    }
-}
-
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-        const listings = await getListings(currentPage);
+        const listings = await getListings();
+
         createListingHTML(listings);
 
         const isLoggedIn = localStorage.getItem('accessToken') !== null;
@@ -188,11 +178,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         const searchForm = document.getElementById('searchForm');
         searchForm.addEventListener('submit', handleSearch);
 
-        document.getElementById('loadMoreBtn').addEventListener('click', loadMoreListings);
     } catch (error) {
         console.error('Error in initialization:', error.message);
         errorMessageElement.textContent = 'Fetching failed. Please try again.';
         errorMessageElement.classList.add('my-5');
     }
 });
-
