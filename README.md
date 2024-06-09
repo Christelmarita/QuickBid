@@ -33,18 +33,44 @@ This project was to demonstrate the culmination of the skills acquired over the 
 
 The project integrates with the Noroff API, focusing on the Auction Endpoints. The API handles the backend functionalities.
 
-## Getting Started
-
-1. Clone the repository to your local machine.
-2. Install the necessary dependencies using `npm install`.
-3. Run the project using `npm start`.
-
 ## Built with
 
 - HTML
 - CSS
 - Javascript
 - [Bootstrap](https://getbootstrap.com)
+
+## Getting Started
+
+### Installing
+1. Clone the repo:
+
+```bash
+git clone git@github.com:Christelmarita/QuickBid.git
+```
+
+2. Install the dependencies:
+
+```
+npm install
+```
+
+### Running
+
+To run the app, run the following commands:
+
+```bash
+npm run start
+```
+
+## Contributing
+
+Contribute by opening a pull request.
+
+## Contact
+
+[My LinkedIn page](https://www.linkedin.com/in/christelosterboe/)
+[Email](christel.marita@onibodesign.no)
 
 ## Acknowledgments
 
