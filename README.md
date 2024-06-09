@@ -1,4 +1,7 @@
 # QuickBid
+![image](https://github.com/Christelmarita/QuickBid/assets/114878235/c2538975-9ab3-4288-82d1-9e8c39bc9b4b)
+
+Semester Project 2 during my second year as a Front End student at Noroff.
 
 ## Overview
 
@@ -36,18 +39,12 @@ The project integrates with the Noroff API, focusing on the Auction Endpoints. T
 2. Install the necessary dependencies using `npm install`.
 3. Run the project using `npm start`.
 
-## Technologies Used
+## Built with
 
-- HTML, CSS and Javascript
-- Bootstrap for responsive and modern UI
-- Fetch API for handling server communication
-- Noroff API for managing auction-related functionalities
-
-## Future Enhancements
-
-- Enhance the user interface for a more visually appealing experience.
-- Implement notifications for bid status and auction end.
-- Enable users to edit their own auctions, providing greater flexibility and control over their listings.
+- HTML
+- CSS
+- Javascript
+- [Bootstrap](https://getbootstrap.com)
 
 ## Acknowledgments
 
